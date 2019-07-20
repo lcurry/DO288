@@ -22,10 +22,14 @@ RUN yum install -y --setopt=tsflags=nodocs --noplugins httpd && \
 	echo "Hello from the httpd-parent container!" > ${HOME}/index.html
 # Allows child images to inject their own content into DocumentRoot
 ONBUILD COPY src/ ${DOCROOT}/
-EXPOSE 80
+#EXPOSE 80
+EXPOSE 8080
+RUN chgrp -R 0 /var/log/httpd /var/run/httpd && \
+	chmod -R g=u /var/log/httpd /var/run/httpd
 # This stuff is needed to ensure a clean start
 RUN rm -rf /run/httpd && mkdir /run/httpd
 # Run as the root user
-USER root
+#USER root
+USER 1001
 # Launch apache daemon
 CMD /usr/sbin/apachectl -DFOREGROUND
